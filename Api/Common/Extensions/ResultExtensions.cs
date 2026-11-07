@@ -1,7 +1,7 @@
-namespace Api.Common.Extensions;
-
 using Domain.Common;
 using Microsoft.AspNetCore.Mvc;
+
+namespace Api.Common.Extensions;
 
 public static class ResultExtensions
 {
@@ -12,7 +12,27 @@ public static class ResultExtensions
             throw new InvalidOperationException("Cannot convert success result to ProblemDetails.");
         }
 
-        var error = result.Error!;
+        return CreateProblem(result.Error!);
+    }
+
+    public static IResult ToProblemDetails(this Result result)
+    {
+        if (result.IsSuccess)
+        {
+            throw new InvalidOperationException("Cannot convert success result to ProblemDetails.");
+        }
+
+        return CreateProblem(result.Error!);
+    }
+
+    public static TOut Match<TOut>(
+        this Result result,
+        Func<TOut> onSuccess,
+        Func<Result, TOut> onFailure)
+        => result.IsSuccess ? onSuccess() : onFailure(result);
+
+    private static IResult CreateProblem(Error error)
+    {
         var problemDetails = new ProblemDetails
         {
             Title = error.Code,
@@ -27,7 +47,7 @@ public static class ResultExtensions
     {
         string code when code.Contains("NotFound") => 404,
         string code when code.Contains("Validation") => 400,
-        string code when code.Contains("Conflict") => 409,
+        string code when code.Contains("Conflict") || code.Contains("InUse") => 409,
         _ => 500
     };
 }

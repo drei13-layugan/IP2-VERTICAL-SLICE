@@ -1,4 +1,4 @@
-namespace Api.Features.Students;
+    namespace Api.Features.Students;
 
 using Api.Common.Extensions;
 using Application.Abstractions.Messaging;

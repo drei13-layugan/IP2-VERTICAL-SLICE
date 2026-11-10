@@ -33,7 +33,7 @@ public static class CourseEndpoints
              .WithSummary("Update an existing course");
 
         group.MapGet("/{id:guid}", GetById)
-            .WithName("GetByIdRouteName")
+            .WithName(GetByIdRouteName)
             .WithSummary("Get course by ID");
 
         group.MapDelete("/{id:guid}", Delete)
